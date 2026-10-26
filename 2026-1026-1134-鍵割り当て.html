@@ -323,7 +323,7 @@
     <!-- JavaScript ロジック -->
     <script>
         let rawShiftData = [];
-        let detectedExcelTitle = "令和　7年 10月度　鍵管理表予定表【3か月保管】";
+        let detectedExcelTitle = "";
         let staffList = [
             { name: "五家", role: "リーダー", aliases: ["五家夏希"], mondaySafe: false, priority: 1, openCount: 0, closeCount: 0, safeCount: 0 },
             { name: "爲貝", role: "リーダー", aliases: ["爲貝虹太"], mondaySafe: false, priority: 2, openCount: 0, closeCount: 0, safeCount: 0 },
@@ -379,7 +379,17 @@
         function getSelectedYM() {
             const y = parseInt(document.getElementById('selYear').value, 10);
             const m = parseInt(document.getElementById('selMonth').value, 10);
-            return { y, m };
+            return { y: y || null, m: m || null };
+        }
+
+        // 年月が未選択ならメッセージを出して false を返す
+        function requireYM() {
+            const ym = getSelectedYM();
+            if (!ym.y || !ym.m) {
+                alert("先に「① 対象の年月」を選択してください。");
+                return false;
+            }
+            return true;
         }
 
         function toHalfWidth(s) {
@@ -500,6 +510,7 @@
             const input = ev.target;
             const file = input.files[0];
             if (!file) return;
+            if (!requireYM()) { input.value = ""; return; }
             const fileName = file.name;
 
             const reader = new FileReader();
@@ -647,7 +658,11 @@
 
         function generateDefaultSampleShift() {
             const sel = getSelectedYM();
-            const fb = (sel.y && sel.m) ? sel : getFallbackYM();
+            const fb = (sel.y && sel.m) ? sel : ((detectedYear && detectedMonth) ? { y: detectedYear, m: detectedMonth } : null);
+            if (!fb) {
+                alert("先に「① 対象の年月」を選択してください。");
+                return false;
+            }
             detectedYear = fb.y;
             detectedMonth = fb.m;
             detectedExcelTitle = `令和　${fb.y - 2018}年 ${fb.m}月度　鍵管理表予定表【3か月保管】`;
@@ -677,6 +692,7 @@
             shiftResult = [];
             renderPreview();
             setLoadStatus("サンプルデータ生成完了", true);
+            return true;
         }
 
         function renderPreview() {
@@ -993,9 +1009,10 @@
         function proceedToGenerate() {
             try {
                 if (!rawShiftData || rawShiftData.length === 0) {
-                    generateDefaultSampleShift();
+                    if (!generateDefaultSampleShift()) return;
                 }
                 generateShift();
+                if (!shiftResult || shiftResult.length === 0) return;
                 switchTab('tab3');
             } catch (err) {
                 console.error("Generate error:", err);
@@ -1006,7 +1023,7 @@
         function recalculate() {
             try {
                 if (!rawShiftData || rawShiftData.length === 0) {
-                    generateDefaultSampleShift();
+                    if (!generateDefaultSampleShift()) return;
                 }
                 generateShift();
                 renderResult();
@@ -1119,7 +1136,7 @@
         function generateShift() {
             const dateMap = {};
             if (!rawShiftData || rawShiftData.length === 0) {
-                generateDefaultSampleShift();
+                if (!generateDefaultSampleShift()) { shiftResult = []; return; }
             }
             rawShiftData.forEach(item => {
                 if (!item || !item.date) return;
@@ -1133,7 +1150,7 @@
  
             const dates = Object.keys(dateMap);
             if (dates.length === 0) {
-                generateDefaultSampleShift();
+                if (!generateDefaultSampleShift()) { shiftResult = []; return; }
                 return generateShift();
             }
  
@@ -1830,12 +1847,13 @@
             for (let y = now.getFullYear() - 3; y <= now.getFullYear() + 2; y++) {
                 ySel.add(new Option(y, y));
             }
+            mSel.add(new Option("--", ""));   // 月は未選択スタート
             for (let m = 1; m <= 12; m++) mSel.add(new Option(m, m));
             ySel.value = now.getFullYear();
-            mSel.value = now.getMonth() + 1;
+            mSel.value = "";
 
             // 年月を変えたら、読込済みファイルを選択年月で再解析
-            const reparse = () => { reparseLoaded(); };
+            const reparse = () => { if (getSelectedYM().m) reparseLoaded(); };
             ySel.addEventListener('change', reparse);
             mSel.addEventListener('change', reparse);
 

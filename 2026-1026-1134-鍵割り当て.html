@@ -74,7 +74,7 @@
                     <h3 class="font-bold text-slate-700 flex items-center gap-2 text-sm sm:text-base">
                         <i class="fa-solid fa-table text-indigo-600"></i> STEP0. 対象メンバー・全日程シフト一覧表
                     </h3>
-                    <span id="loadStatus" class="text-xs px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full font-medium border border-amber-200">未読込（自動生成対応）</span>
+                    <span id="loadStatus" class="text-xs px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full font-medium border border-amber-200">未読込（Excelを読み込んでください）</span>
                 </div>
                 <div class="overflow-x-auto max-h-96 border border-slate-200 rounded-lg">
                     <table id="previewTable" class="min-w-full text-xs sm:text-sm text-center text-slate-600 divide-y divide-slate-200">
@@ -537,8 +537,8 @@
                     parseExcelExactLayout(best.rows, best.name, getSelectedYM(), best.det);
                 } catch (err) {
                     console.error(err);
-                    alert("ファイルの解析に失敗しました。サンプルデータを使用します。");
-                    generateDefaultSampleShift();
+                    alert("ファイルの解析に失敗しました。ファイル形式や内容を確認してください。");
+                    resetLoadedData();
                 } finally {
                     input.value = ""; // 同じファイルを再選択しても読み込めるように
                 }
@@ -646,7 +646,8 @@
             });
 
             if (parsedItems.length === 0) {
-                generateDefaultSampleShift();
+                alert("登録メンバーの行がシフト表内で見つかりませんでした。メンバー名または「Excel上の表記」を確認してください。");
+                resetLoadedData();
                 return;
             }
 
@@ -656,43 +657,21 @@
             setLoadStatus(`読込成功（${detectedYear}年${detectedMonth}月 / ${new Set(rawShiftData.map(i => i.date)).size}日分）${monthNote}`, true);
         }
 
+        // 旧：サンプルデータ自動生成。Excel未読込のときは何も表示しない仕様のため無効化
         function generateDefaultSampleShift() {
-            const sel = getSelectedYM();
-            const fb = (sel.y && sel.m) ? sel : ((detectedYear && detectedMonth) ? { y: detectedYear, m: detectedMonth } : null);
-            if (!fb) {
-                alert("先に「① 対象の年月」を選択してください。");
-                return false;
-            }
-            detectedYear = fb.y;
-            detectedMonth = fb.m;
-            detectedExcelTitle = `令和　${fb.y - 2018}年 ${fb.m}月度　鍵管理表予定表【3か月保管】`;
-            const lastDay = new Date(fb.y, fb.m, 0).getDate();
+            return false;
+        }
 
-            let parsed = [];
-            const staffNames = orderedStaff().map(s => s.name);
-            for (let d = 1; d <= lastDay; d++) {
-                let dt = new Date(fb.y, fb.m - 1, d);
-                let dayW = DOW[dt.getDay()];
-                staffNames.forEach((name, sIdx) => {
-                    let sType = "遅";
-                    if (sIdx === 0) sType = (d % 4 === 0) ? "超早" : "早";
-                    else if ((d + sIdx) % 5 === 0) sType = "超早";
-                    else if ((d + sIdx) % 3 === 0) sType = "早";
-                    else if (d === 1 && sIdx === 2) sType = "遅＋";
-
-                    parsed.push({
-                        date: `${fb.m}/${d}`,
-                        dayOfWeek: dayW,
-                        name: name,
-                        shiftType: sType
-                    });
-                });
-            }
-            rawShiftData = parsed;
+        // 読込データを初期（未読込）状態に戻す
+        function resetLoadedData() {
+            rawShiftData = [];
             shiftResult = [];
+            lastLoaded = null;
+            detectedYear = null;
+            detectedMonth = null;
+            detectedExcelTitle = "";
             renderPreview();
-            setLoadStatus("サンプルデータ生成完了", true);
-            return true;
+            setLoadStatus("未読込", false);
         }
 
         function renderPreview() {
@@ -1009,7 +988,8 @@
         function proceedToGenerate() {
             try {
                 if (!rawShiftData || rawShiftData.length === 0) {
-                    if (!generateDefaultSampleShift()) return;
+                    alert("先にExcelファイルを読み込んでください。");
+                    return;
                 }
                 generateShift();
                 if (!shiftResult || shiftResult.length === 0) return;
@@ -1023,7 +1003,8 @@
         function recalculate() {
             try {
                 if (!rawShiftData || rawShiftData.length === 0) {
-                    if (!generateDefaultSampleShift()) return;
+                    alert("先にExcelファイルを読み込んでください。");
+                    return;
                 }
                 generateShift();
                 renderResult();

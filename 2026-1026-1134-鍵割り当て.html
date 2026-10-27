@@ -175,7 +175,7 @@
                     <div id="fixedHolderBox" class="mt-4 p-3 border border-slate-200 rounded-lg bg-slate-50"></div>
 
                     <p class="mt-3 text-[11px] text-slate-400 leading-relaxed">
-                        ※氏名の変更・メンバーの追加／削除・鍵No.3担当の変更を行うと、割り当て結果は再計算されます（手動固定は解除されます）。<br>
+                        ※氏名の変更・メンバーの追加／削除・固定で鍵を持つ人の変更を行うと、割り当て結果は再計算されます（手動固定は解除されます）。<br>
                         ※「Excel上の表記」は、シフト表に書かれている名前（フルネーム等）です。カンマ区切りで複数登録できます。氏名を変更した場合は空欄に戻るので、必要なら入力し直してください。<br>
                         ※鍵は3つ必要なため、メンバーは最低3名・最大12名です。
                     </p>
@@ -191,15 +191,17 @@
                             <li><strong>鍵開けは超早・早・フルの人</strong>：前日から鍵を持っている人、または前日に誰かが店舗に置いた鍵を使える人だけが担当できます。月全体を先読みして、翌日以降の鍵開け担当に鍵が渡るよう割り当てます。休・応援・グランド等で出勤しない人は鍵を持ち帰ったまま次の出勤日に使うため、店舗に置くのは「どうしても受け渡せない時」だけです。</li>
                             <li><strong>金庫チェックは遅番の人だけ</strong>：遅番以外のシフトの人（早番・超早、会議・応援・休みなど）には金庫チェックを割り当てません。フルの人はできます。遅番がいない日は担当なしとしてNGで知らせます。画面2の「金庫チェックの担当条件」で変更できます。</li>
                             <li><strong>鍵閉め・金庫チェックは遅番・フルの人</strong>：遅番の人の中から選びます。「フル」は早番・遅番どちらにも対応可能として扱います。鍵閉め担当は退勤時に鍵を持っている必要があります。</li>
-                            <li><strong><span class="fixedHolderName">五家</span>は1つの鍵を持ち回し ＆ 残り2つを分散</strong>：<span class="fixedHolderName">五家</span>が鍵No.3をずっと持ち回し、残りの鍵No.1・No.2を他のメンバーで回します。店舗置きは、持ち帰りや受け渡しで回らない時だけです。</li>
+                            <li><strong><span class="fixedHolderName">五家</span>は1つの鍵を持ち回し ＆ 残り2つを分散</strong>：<span class="fixedHolderName">五家</span>が<span class="fixedKeyName">鍵No.1</span>をずっと持ち、残りの2本を他のメンバーで回します。</li>
                             <li><strong>引渡者・引受者同一時の省略</strong>：引渡者と引受者が同じ場合は、引受者セルを空欄としてスッキリ表現します。</li>
                             <li><strong>鍵開けは前日の夜までに鍵を持っていること</strong>：翌日が早番（超早・早・フル）の場合、その担当者は前日の夜までに鍵を受け取っている必要があります。</li>
                             <li><strong>遅番→早番の受け渡し不可</strong>：遅番は21:30以降に閉めて帰り、早番は19:00に退勤するため、遅番から早番へ鍵を渡すことはできません（早番→遅番は可）。</li>
                             <li><strong>担当者未設定なし</strong>：鍵開け・鍵閉め・金庫チェックは必ず誰かを割当て、条件を緩めた場合は結果画面の上部にエラーとして記載します。</li>
+                            <li><strong><span class="fixedKeyName">鍵No.1</span>は<span class="fixedHolderName">五家</span>が基本ずっと持つ</strong>：残り2本を他の人で回します。鍵が回らないときは、まず<span class="fixedHolderName">五家</span>の鍵を他の人へ渡して対応し、<strong>店舗置きはそれでも回らないときだけの最後の手段</strong>です（店舗置きはなるべくしない）。</li>
+                            <li><strong>同じ種類の鍵は同じ人が持ち続ける</strong>：なるべく、鍵No.1を持つ人はNo.1、No.2を持つ人はNo.2をずっと持つように回し、鍵の種類の入れ替わりを減らします。</li>
                             <li><strong>研修の日は店舗にいない</strong>：「研修」の日は店舗にいないため、鍵の受け渡し（引渡し・引受け）・鍵開け・鍵閉め・金庫チェックはできません。その人が鍵を持っている場合は、研修の前の日までに他の人へ渡しておくか、持ち帰ったまま研修明けの出勤日に使います。</li>
                             <li><strong>会議の日は店舗に出勤しない</strong>：「会議」（店長会議・ミーティング等）の日は店舗に出勤していないため、鍵の受け渡し・鍵開け・鍵閉め・金庫チェックはできません。その人の鍵は持ち帰ったままになるので、会議の前の日までに他の人へ渡しておきます。表記はルール設定の「出勤しない表記」で追加できます。</li>
                             <li><strong>非番日考慮</strong>：応援・休・グランド・店長会議・方針等の出勤しない日では鍵の受け渡しができないため、出勤しているメンバーまたは店舗置きで適切に対応します。</li>
-                            <li><strong>上位者の鍵は先回りで他の人へ</strong>：優先順位の上位2名（既定：<span class="deferTopNames">五家・爲貝</span>）には鍵を持たせるのを後回しにします。休・応援などで出勤しない日の前に、その人の鍵を出勤する他の人へあらかじめ渡し、「鍵を持っていない」NGが出ないようにします（この設定がONの間は鍵No.3も固定せず受け渡します。画面2の「ルール」でON/OFF・人数を変更できます）。</li>
+                            <li><strong>上位者の鍵は先回りで他の人へ</strong>：優先順位の上位2名（既定：<span class="deferTopNames">五家・爲貝</span>）には鍵を持たせるのを後回しにします。休・応援などで出勤しない日の前に、その人の鍵を出勤する他の人へあらかじめ渡し、「鍵を持っていない」NGが出ないようにします（鍵No.3を持ち続ける<span class="fixedHolderName">五家</span>は、この後回しの対象外です。画面2の「ルール」でON/OFF・人数を変更できます）。</li>
                             <li><strong>金庫チェック連日NG</strong>：金庫チェックの連日担当のみNGとします。</li>
                             <li><strong>NGの自動修正</strong>：割り当て結果でNGが出たら「自動で修正する」を押すと、条件を追加して作り直した「3-2 割り当て結果」「3-3 …」を作成します（NGが無くなるまで押せます）。「手動で一気に直す」で修正を飛ばして手動修正画面へ進むこともできます。</li>
                         </ul>
@@ -260,6 +262,7 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mb-3 text-xs text-slate-600">
                     <span class="font-semibold">凡例：</span>
+                    <span class="px-2 py-0.5 rounded-md font-bold" style="background:#1e3a8a;color:#fff;">鍵開けが<span class="openPrefName">五家</span>以外</span>
                     <span class="px-2 py-0.5 rounded-md bg-blue-200 text-blue-900 font-bold">超早</span>
                     <span class="px-2 py-0.5 rounded-md bg-sky-100 text-sky-900 font-bold">早（9時まで出勤の時刻表記も含む）</span>
                     <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 font-bold">遅</span>
@@ -952,7 +955,7 @@
             if (box) {
                 box.innerHTML = `
                     <label class="text-xs font-bold text-slate-700 flex flex-wrap items-center gap-2">
-                        <i class="fa-solid fa-key text-blue-500"></i> 鍵No.3（青）を持ち回す人
+                        <i class="fa-solid fa-key text-red-500"></i> 鍵を固定で持つ人
                         <select onchange="setFixedHolder(this.value)" class="${inputCls}">
                             ${orderedStaff().map(s => `<option value="${esc(s.name)}" ${s.name === fixedName ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}
                         </select>
@@ -1109,7 +1112,7 @@
         //  休・応援・グランド等で出勤しない人は、鍵を持ったまま次の出勤日まで持ち帰る。
         // -------------------------------------------------------------------------
         function planKeyHolders(dates, dateMap, lockedMap, defaultStart) {
-            if (RULES.deferTop) return planKeyHoldersDefer(dates, dateMap, lockedMap, defaultStart);   // 上位者の鍵は先回りで他の人へ
+            if (RULES.deferTop || RULES.fixedKeyOn) return planKeyHoldersTwoPass(dates, dateMap, lockedMap, defaultStart);   // 上位者の鍵は先回りで他の人へ
             const fixedName = getFixedHolder();
             const order = staffList.slice().sort((a, b) => a.priority - b.priority).map(s => s.name);
             const vals = [...order, STORE_NAME];
@@ -1164,7 +1167,7 @@
                             if (bad) continue;
                             if (s[0] === s[1] && s[0] !== STORE_NAME) continue;        // 同じ人が2本持たない
                             s.forEach(x => {
-                                if (x === STORE_NAME) cost += RULES.storeAllow ? 100 : 100000;                    // 店舗置きは最後の手段
+                                if (x === STORE_NAME) cost += RULES.storeAllow ? (Number(RULES.storeCost) || 500) : 100000;                    // 店舗置きは最後の手段
                                 else if (x === fixedName) cost += 500;               // 固定担当は鍵No.3
                             });
                             // 鍵閉め担当は退勤時に鍵が必要（優先順位が高い遅番の人を優先）
@@ -1213,7 +1216,7 @@
         //  鍵No.3も固定せず、3つの鍵すべてを動かせる（状態 = 鍵No.1・No.2・No.3の保持者）。
         //  ※高速化のため、メンバーを番号に置き換えて計算している。
         // -------------------------------------------------------------------------
-        function planKeyHoldersDefer(dates, dateMap, lockedMap, defaultStart) {
+        function planKeyHoldersDefer(dates, dateMap, lockedMap, defaultStart, homeKey) {
             const fixedName = getFixedHolder();
             const order = staffList.slice().sort((a, b) => a.priority - b.priority).map(s => s.name);
             const n = order.length, STORE = n, B = n + 1, S = B * B * B;
@@ -1224,9 +1227,9 @@
             const topN = Math.max(0, Math.min(Number(RULES.deferTopN) || 0, n - 3));   // 鍵3本を持てる人は最低3名残す
             const DEFER_COST = 10;      // 上位者が鍵を持つ1本・1日あたりの後回しコスト（店舗置き100より軽く、受け渡し2より重い）
             const BEAM = Math.max(50, Number(RULES.beam) || 150);           // 探索幅（毎日、コストの低い上位の状態だけ残して速度を保つ）
-            const storeCost = RULES.storeAllow ? 100 : 100000;
+            const storeCost = RULES.storeAllow ? (Number(RULES.storeCost) || 500) : 100000;   // 店舗置きは最後の手段（五家の鍵を回すより重い）
             const slotCost = new Float64Array(B);
-            for (let i = 0; i < n; i++) slotCost[i] = i < topN ? DEFER_COST : 0;
+            for (let i = 0; i < n; i++) slotCost[i] = (i < topN && !(RULES.fixedKeyOn && order[i] === fixedName)) ? DEFER_COST : 0;   // 鍵No.3固定の人は後回しにしない
             slotCost[STORE] = storeCost;
             const enc = (a, b, c) => (a * B + b) * B + c;
             const prefIdx = (RULES.openPreferOn && idxOf[RULES.openPrefer] !== undefined && RULES.openPrefer !== STORE_NAME) ? idxOf[RULES.openPrefer] : -1;
@@ -1239,9 +1242,34 @@
             }
             const holdCost = new Float64Array(S);
             for (let id = 0; id < S; id++) if (validState[id]) holdCost[id] = slotCost[A[id]] + slotCost[Bk[id]] + slotCost[C[id]];
+            // 鍵No.3は固定担当（五家）が基本ずっと持つ：他の人が持つ・五家が別の鍵を持つのは、店舗置き（100）より重い（150/日）
+            const fixIdx = (RULES.fixedKeyOn && idxOf[fixedName] !== undefined) ? idxOf[fixedName] : -1;
+            const FIX_COST = Number(RULES.fixedKeyCost) || 150;
+            const fixSlot = Math.max(0, Math.min(2, Number(RULES.fixedKeySlot) || 0));   // 五家が持つ鍵（0=No.1, 1=No.2, 2=No.3）
+            // 同じ種類の鍵を同じ人がずっと持つ：その人の「いつもの鍵」以外を持つと少し重く
+            const AFF_COST = Number(RULES.keyAffinityCost) || 1.5;
+            for (let id = 0; id < S; id++) {
+                if (!validState[id]) continue;
+                if (fixIdx >= 0) {
+                    const sl = [A[id], Bk[id], C[id]], fs = fixSlot;
+                    if (sl[fs] !== fixIdx) holdCost[id] += FIX_COST;                       // 固定の鍵を他の人が持つ
+                    if (sl.some((p, j) => j !== fs && p === fixIdx)) holdCost[id] += FIX_COST;   // 五家が別の鍵を持つ
+                }
+                if (homeKey) {
+                    [A[id], Bk[id], C[id]].forEach((p, slot) => {
+                        if (p === STORE || p === fixIdx) return;
+                        const h = homeKey[p];
+                        if (h !== undefined && h !== slot) holdCost[id] += AFF_COST;
+                    });
+                }
+            }
 
             // 初期状態（月初は前日の保持者が分からないので、既定の保持者に近い並びを好む）
-            const ref = [idxOf[defaultStart[0]], idxOf[defaultStart[1]], idxOf[fixedName]];
+            const ref = (() => {   // 月初：固定の鍵は五家、残りは既定の2人
+                const fs = RULES.fixedKeyOn ? Math.max(0, Math.min(2, Number(RULES.fixedKeySlot) || 0)) : 2;
+                const others = [idxOf[defaultStart[0]], idxOf[defaultStart[1]]];
+                return [0, 1, 2].map(j => j === fs ? idxOf[fixedName] : others.shift());
+            })();
             let cost = new Float64Array(S).fill(Infinity);
             let kdArr = new Array(S).fill(null);
             for (let id = 0; id < S; id++) {
@@ -2001,7 +2029,7 @@
                 <tr>
                     <td>${r.date} (${r.dayOfWeek})</td>
                     <td style="font-size: 10pt; background-color: #f8fafc; color: #334155;">${r.shiftsSummary || '-'}</td>
-                    <td ${openStyle}>${r.openStaff}</td>
+                    <td ${openStyle} ${isOpenNotPref(r.openRaw) && !isOpenUnset ? 'style="background-color:#1e3a8a;color:#ffffff;font-weight:bold;"' : ''}>${r.openStaff}</td>
                     <td ${closeStyle}>${r.closeStaff}</td>
                     <td ${safeStyle}>${r.safeStaff}</td>
                     <td class="cell-k1">${kh["鍵No.1"]}</td>
@@ -2170,9 +2198,10 @@ let RULES = {
     openNeedsKey: true, noLateToEarly: true, storeAllow: true, storeOpen: false,
     safeNoConsec: true, safeGap: 1, prioWeight: 1, balance: 2, earlyHour: 9,
     deferTop: true, deferTopN: 2,
-    safeLookahead: false, penOpen: 1000, penClose: 300, beam: 150,
+    safeLookahead: false, penOpen: 5000, penClose: 3000, beam: 150,
     openPreferOn: true, openPrefer: "五家", openPreferWeight: 60,
     safeLateOnly: true, safeFullOk: true,
+    fixedKeyOn: true, fixedKeyCost: 150, fixedKeySlot: 0, storeCost: 500, keyAffinity: true, keyAffinityCost: 1.5,
     kw: { off: "公休,休日,有給,欠勤,方針,グランド,応援,店長会議,会議,ミーティング,MTG,研修", early: "早", late: "遅,L,Ｌ", full: "フル" },
     custom: []
 };
@@ -3077,7 +3106,7 @@ renderEditTable = function () {
     if (c) { const n = ngScore(shiftResult).days; c.innerHTML = n ? `<span class="font-bold text-red-600">NG ${n}日</span>（赤い行）` : '<span class="font-bold text-emerald-600">NGなし</span>'; }
 };
 
-function setStrongKey(on) { RULES.penOpen = on ? 300000 : 1000; RULES.penClose = on ? 300000 : 300; shiftResult = []; }
+function setStrongKey(on) { RULES.penOpen = on ? 300000 : 5000; RULES.penClose = on ? 300000 : 3000; shiftResult = []; }
 </script>
 <script>
 // ===== 追加：NGの種類ごとの色分け =====
@@ -3372,6 +3401,12 @@ renderRulesPanel = function () {
     const ic = "border border-slate-300 rounded px-2 py-1 text-xs bg-white";
     el.insertAdjacentHTML('afterbegin', `
       <div class="bg-white p-5 rounded-xl shadow-sm border-2 border-indigo-300 space-y-3 text-xs text-slate-600">
+        <h3 class="font-bold text-slate-700 text-sm flex items-center gap-2"><i class="fa-solid fa-key text-blue-600"></i>鍵の持ち方</h3>
+        <label class="flex items-start gap-1.5 cursor-pointer"><input type="checkbox" class="mt-0.5" ${RULES.fixedKeyOn ? 'checked' : ''} onchange="setRule('fixedKeyOn', this.checked)"><span><b>${esc(getFixedHolder())}は
+          <select onchange="setRule('fixedKeySlot', this.value, 1); renderPriorityList();" class="border border-slate-300 rounded px-1 py-0.5 text-xs bg-white font-bold">${['鍵No.1（赤）', '鍵No.2（黄）', '鍵No.3（青）'].map((t, j) => `<option value="${j}" ${(Number(RULES.fixedKeySlot) || 0) === j ? 'selected' : ''}>${t}</option>`).join('')}</select>
+          を基本ずっと持つ</b>（残り2本を他の人で回す）。鍵が回らないときはまず${esc(getFixedHolder())}の鍵を他の人へ渡し、<b>店舗置きはそれでも回らないときだけ</b>（なるべく店舗に置かない）</span></label>
+        <label class="flex items-start gap-1.5 cursor-pointer"><input type="checkbox" class="mt-0.5" ${RULES.keyAffinity ? 'checked' : ''} onchange="setRule('keyAffinity', this.checked)"><span><b>なるべく同じ種類の鍵を同じ人がずっと持つ</b>（鍵No.1の人はNo.1、No.2の人はNo.2を持ち続けるように回す）</span></label>
+        <hr class="border-slate-200">
         <h3 class="font-bold text-slate-700 text-sm flex items-center gap-2"><i class="fa-solid fa-vault text-amber-600"></i>金庫チェックの担当条件</h3>
         <label class="flex items-start gap-1.5 cursor-pointer"><input type="checkbox" class="mt-0.5" ${RULES.safeLateOnly ? 'checked' : ''} onchange="setRule('safeLateOnly', this.checked)"><span><b>遅番以外のシフトの人は金庫チェックができない</b>（早番・超早の人、会議・店長会議・研修・応援・休みなど店舗にいない人には割り当てない。遅番がいない日は担当なしでNG表示）</span></label>
         <label class="flex items-start gap-1.5 cursor-pointer ml-5"><input type="checkbox" class="mt-0.5" ${RULES.safeFullOk !== false ? 'checked' : ''} onchange="setRule('safeFullOk', this.checked)"><span><b>「フル」の人は金庫チェックできる</b>（遅番として扱う）</span></label>
@@ -4537,7 +4572,7 @@ function exportToCheckStyle() {
         <tr style="height:96pt;"><td colspan="${1 + nKeyCols}" class="red-title">${detectedExcelTitle}</td><td class="gap"></td>
             <td colspan="${nRight}" style="background:#1e293b;color:#ffffff;font-weight:bold;font-size:24pt;text-align:left;font-family:Meiryo;">シフト状況・担当の確認${v ? `（${v.label} 割り当て結果）` : ''}</td></tr>
         <tr style="height:62pt;"><td colspan="${1 + nKeyCols}" class="note-text">＊防犯管理上、いつ、誰が、どの鍵を持っているのか明確にし、受渡し時には必ず両者（引渡者・引受者）が押印して下さい。</td><td class="gap"></td>
-            <td colspan="${nRight}" class="r-note" style="font-size:14pt;">色の見方：<span style="background:#93c5fd;">　超早　</span> <span style="background:#dbeafe;">　早　</span> <span style="background:#fde68a;">　遅　</span> <span style="background:#ddd6fe;">　フル　</span> <span style="background:#f1f5f9;color:#94a3b8;">　休・応援・会議など　</span></td></tr>
+            <td colspan="${nRight}" class="r-note" style="font-size:14pt;">色の見方：<span style="background:#1e3a8a;color:#ffffff;font-weight:bold;">　鍵開けが${esc(openPrefName())}以外　</span> <span style="background:#93c5fd;">　超早　</span> <span style="background:#dbeafe;">　早　</span> <span style="background:#fde68a;">　遅　</span> <span style="background:#ddd6fe;">　フル　</span> <span style="background:#f1f5f9;color:#94a3b8;">　休・応援・会議など　</span></td></tr>
         <tr style="height:62pt;"><td colspan="${1 + nKeyCols}" class="note-text">＊金庫の鍵は、必ず営業中は携行し、退勤時は持ち帰る運用として下さい。</td><td class="gap"></td>
             <td colspan="${nRight}" class="r-note" style="font-size:14pt;">鍵の欄：色の濃いマス＝その日に鍵を受け取る人（引受者）／ 判定：<span style="background:#dcfce7;color:#15803d;font-weight:bold;">　OK　</span> ${Object.values(CAT).map(c => `<span style="background:${c.bg};color:${c.fg};font-weight:bold;">　${c.name}　</span>`).join(' ')}</td></tr>
         <tr><td colspan="${1 + nKeyCols}" style="border: 1px solid #000;">&nbsp;</td><td class="gap"></td><td colspan="${nRight}" style="border:none;">&nbsp;</td></tr>
@@ -4600,7 +4635,7 @@ function exportToCheckStyle() {
             ${keyCells}
             <td class="gap"></td>
             ${shiftCells}
-            ${who(r.openRaw, "background:#eff6ff;color:#1e40af;", "open")}
+            ${who(r.openRaw, isOpenNotPref(r.openRaw) ? "background:#1e3a8a;color:#ffffff;" : "background:#eff6ff;color:#1e40af;", "open")}
             ${who(r.closeRaw, "background:#fffbeb;color:#92400e;", "close")}
             ${who(r.safeRaw, "background:#fef9c3;color:#78350f;", "safe")}
             <td class="r-cell" style="font-weight:bold;font-size:18pt;${isNG ? 'background:#fee2e2;color:#dc2626;' : 'background:#dcfce7;color:#15803d;'}">${disp.status}</td>
@@ -5190,6 +5225,125 @@ renderEditTable = function () {
             <span class="flex flex-wrap gap-1">${ngMsgs(o.r).map(ngChip).join('')}</span></li>`).join('')}</ul>
       </div>`;
 };
+</script>
+<script>
+// ===== 鍵の持ち方：2回計算して「いつもの鍵」を決め、同じ人が同じ種類の鍵を持ち続けるようにする =====
+function planKeyHoldersTwoPass(dates, dateMap, lockedMap, defaultStart) {
+    const first = planKeyHoldersDefer(dates, dateMap, lockedMap, defaultStart, null);
+    if (!RULES.keyAffinity) return first;
+    const order = staffList.slice().sort((a, b) => a.priority - b.priority).map(s => s.name);
+    const cnt = order.map(() => [0, 0, 0]);
+    first.days.forEach(d => (d.slots || []).forEach((nm, slot) => { const i = order.indexOf(nm); if (i >= 0) cnt[i][slot]++; }));
+    const home = {};
+    cnt.forEach((c, i) => { const tot = c[0] + c[1] + c[2]; if (tot >= 2) home[i] = c.indexOf(Math.max(...c)); });
+    return planKeyHoldersDefer(dates, dateMap, lockedMap, defaultStart, home);
+}
+</script>
+<script>
+// ===== 添付形式（提出用）に薄い色のハイライトを付ける（レイアウト・文言・フォントはそのまま） =====
+exportToAttachedExcelStyle = function () {
+    if (!shiftResult || shiftResult.length === 0) { alert("出力するシフトデータがありません。先にシフトを作成してください。"); return; }
+    const KEY = [
+        { k: "鍵No.1", label: "鍵No.１<br>（キーホルダー赤）", head: "#FBE3E3", give: "#FFF8F8", recv: "#FAD9D9" },
+        { k: "鍵No.2", label: "鍵No.2<br>（キーホルダー黄）", head: "#FFF3CC", give: "#FFFDF3", recv: "#FFEBA8" },
+        { k: "鍵No.3", label: "鍵No.3<br>（キーホルダー青）", head: "#E1ECFB", give: "#F7FAFF", recv: "#D4E4FA" }
+    ];
+    let html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="UTF-8">
+    <style>
+        table { border-collapse: collapse; width: 100%; font-family: 'HG創英角ｺﾞｼｯｸUB', 'Meiryo', sans-serif; }
+        th, td { border: 1px solid #000000; padding: 4px 6px; text-align: center; vertical-align: middle; }
+        td { mso-number-format: "\@"; }
+        .col-a { width: 160px; font-size: 20pt; font-family: 'MS PGothic', sans-serif; }
+        .red-title { background-color: #ff0000; color: #ffffff; font-weight: bold; font-size: 36pt; text-align: left; font-family: 'HG創英角ｺﾞｼｯｸUB', sans-serif; }
+        .note-text { text-align: left; font-size: 20pt; font-family: 'HG創英角ｺﾞｼｯｸUB', sans-serif; background-color: #FFFBEA; }
+        .header-main { font-weight: bold; font-size: 18pt; font-family: 'HG創英角ｺﾞｼｯｸUB', sans-serif; }
+        .sub-header { font-weight: bold; font-size: 18pt; font-family: 'HG創英角ｺﾞｼｯｸUB', sans-serif; }
+        .data-cell { font-size: 24pt; font-family: 'MS PGothic', sans-serif; }
+    </style></head>
+    <body>
+    <table>
+        <tr><td colspan="13" class="red-title">${detectedExcelTitle}</td></tr>
+        <tr><td colspan="13" class="note-text">＊防犯管理上、いつ、誰が、どの鍵を持っているのか明確にし、受渡し時には必ず両者（引渡者・引受者）が押印して下さい。</td></tr>
+        <tr><td colspan="13" class="note-text">＊金庫の鍵は、必ず営業中は携行し、退勤時は持ち帰る運用として下さい。</td></tr>
+        <tr><td colspan="13" style="border: 1px solid #000;">&nbsp;</td></tr>
+        <tr class="header-main">
+            <td rowspan="2" class="col-a" style="background-color:#F2F2F2;">鍵の<br>種類<br>・No.</td>
+            ${KEY.map(k => `<td colspan="4" style="background-color:${k.head};">${k.label}</td>`).join('')}
+        </tr>
+        <tr class="sub-header">
+            ${KEY.map(k => `<td colspan="2" style="background-color:${k.give};">引渡者</td><td colspan="2" style="background-color:${k.head};">引受者</td>`).join('')}
+        </tr>`;
+    let prev = { "鍵No.1": "", "鍵No.2": "", "鍵No.3": "" };
+    shiftResult.forEach((r, idx) => {
+        if (!r) return;
+        const kh = r.keyHolders || {};
+        const pk = idx === 0 ? (r.prevKeyHolders || kh) : prev;
+        const dayLabel = String(r.date).split("/").length === 2 ? `${String(r.date).split("/")[1]}日` : r.date;
+        const dayBg = r.dayOfWeek === "日" ? "#FDECEC" : r.dayOfWeek === "土" ? "#EAF2FD" : "#FFFFFF";
+        const dayFg = r.dayOfWeek === "日" ? "#C00000" : r.dayOfWeek === "土" ? "#1F4E9E" : "#000000";
+        const cells = KEY.map(k => {
+            const a = pk[k.k] || "", b = kh[k.k] || "";
+            const recv = a === b ? "" : b;
+            return `<td colspan="2" class="data-cell" style="background-color:${k.give};">${esc(a)}</td>` +
+                   `<td colspan="2" class="data-cell" style="background-color:${recv ? k.recv : '#FFFFFF'};${recv ? 'font-weight:bold;' : ''}">${esc(recv)}</td>`;
+        }).join('');
+        html += `<tr><td class="col-a" style="background-color:${dayBg};color:${dayFg};">${dayLabel}</td>${cells}</tr>`;
+        prev = { "鍵No.1": kh["鍵No.1"] || "", "鍵No.2": kh["鍵No.2"] || "", "鍵No.3": kh["鍵No.3"] || "" };
+    });
+    html += `</table></body></html>`;
+    const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${String((shiftResult[0] && String(shiftResult[0].date).split("/")[0]) || detectedMonth || "")}月鍵管理表予定表_添付形式.xls`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    try { toast("添付形式の鍵管理表を出力しました", true); } catch (e) { }
+};
+</script>
+<script>
+// 固定の鍵の名前を説明文に反映
+(function () {
+    const _rpl = renderPriorityList;
+    renderPriorityList = function () {
+        _rpl.apply(this, arguments);
+        const nm = ['鍵No.1', '鍵No.2', '鍵No.3'][Math.max(0, Math.min(2, Number(RULES.fixedKeySlot) || 0))];
+        document.querySelectorAll('.fixedKeyName').forEach(el => { el.textContent = nm; });
+    };
+    try { renderPriorityList(); } catch (e) { }
+})();
+</script>
+<style>
+td.open-not-pref { background: #1e3a8a !important; color: #ffffff !important; }
+td.open-not-pref span { background: transparent !important; color: #ffffff !important; border-color: rgba(255,255,255,.6) !important; }
+td.open-not-pref select { background: #ffffff !important; color: #0f172a !important; }
+</style>
+<script>
+// ===== 鍵開けが五家（鍵開けの優先担当）以外の日を濃い青で目立たせる =====
+function openPrefName() { return RULES.openPrefer || (typeof getFixedHolder === 'function' ? getFixedHolder() : '') || '五家'; }
+function isOpenNotPref(name) { return !!name && name !== UNSET && name !== '-' && name !== openPrefName(); }
+(function () {
+    const _rr = renderResult;
+    renderResult = function () {
+        _rr.apply(this, arguments);
+        document.querySelectorAll('.openPrefName').forEach(el => { el.textContent = openPrefName(); });
+        const n = orderedStaff().length;
+        document.querySelectorAll('#resultTableBody tr').forEach((tr, i) => {
+            const r = shiftResult[i], td = tr.children[n + 1];
+            if (r && td && isOpenNotPref(r.openRaw)) { td.classList.add('open-not-pref'); td.title = `鍵開けが${openPrefName()}以外（${r.openRaw}）`; }
+        });
+    };
+    const _ret = renderEditTable;
+    renderEditTable = function () {
+        _ret.apply(this, arguments);
+        document.querySelectorAll('#editTableBody tr[data-idx]').forEach(tr => {
+            const r = shiftResult[Number(tr.dataset.idx)], td = tr.children[1];
+            if (r && td && isOpenNotPref(r.openRaw)) { td.classList.add('open-not-pref'); td.title = `鍵開けが${openPrefName()}以外`; }
+        });
+    };
+})();
 </script>
 </body>
 </html>

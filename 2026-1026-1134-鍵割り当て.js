@@ -196,6 +196,7 @@
                             <li><strong>鍵開けは前日の夜までに鍵を持っていること</strong>：翌日が早番（超早・早・フル）の場合、その担当者は前日の夜までに鍵を受け取っている必要があります。</li>
                             <li><strong>遅番→早番の受け渡し不可</strong>：遅番は21:30以降に閉めて帰り、早番は19:00に退勤するため、遅番から早番へ鍵を渡すことはできません（早番→遅番は可）。</li>
                             <li><strong>担当者未設定なし</strong>：鍵開け・鍵閉め・金庫チェックは必ず誰かを割当て、条件を緩めた場合は結果画面の上部にエラーとして記載します。</li>
+                            <li><strong>研修の日は店舗にいない</strong>：「研修」の日は店舗にいないため、鍵の受け渡し（引渡し・引受け）・鍵開け・鍵閉め・金庫チェックはできません。その人が鍵を持っている場合は、研修の前の日までに他の人へ渡しておくか、持ち帰ったまま研修明けの出勤日に使います。</li>
                             <li><strong>会議の日は店舗に出勤しない</strong>：「会議」（店長会議・ミーティング等）の日は店舗に出勤していないため、鍵の受け渡し・鍵開け・鍵閉め・金庫チェックはできません。その人の鍵は持ち帰ったままになるので、会議の前の日までに他の人へ渡しておきます。表記はルール設定の「出勤しない表記」で追加できます。</li>
                             <li><strong>非番日考慮</strong>：応援・休・グランド・店長会議・方針等の出勤しない日では鍵の受け渡しができないため、出勤しているメンバーまたは店舗置きで適切に対応します。</li>
                             <li><strong>上位者の鍵は先回りで他の人へ</strong>：優先順位の上位2名（既定：<span class="deferTopNames">五家・爲貝</span>）には鍵を持たせるのを後回しにします。休・応援などで出勤しない日の前に、その人の鍵を出勤する他の人へあらかじめ渡し、「鍵を持っていない」NGが出ないようにします（この設定がONの間は鍵No.3も固定せず受け渡します。画面2の「ルール」でON/OFF・人数を変更できます）。</li>
@@ -331,8 +332,8 @@
                     </table>
                 </div>
                 <div class="mt-4 flex flex-wrap justify-end gap-3">
-                    <button type="button" onclick="recalculate()" class="bg-white border border-indigo-300 text-indigo-700 hover:bg-indigo-50 font-medium px-5 py-2 rounded-lg shadow-sm transition flex items-center gap-2 cursor-pointer text-sm">
-                        <i class="fa-solid fa-rotate"></i> 変更を反映して再計算（新しい「3-○ 割り当て結果」を作成）
+                    <button type="button" onclick="reflectManualEdits(false)" class="bg-white border border-indigo-300 text-indigo-700 hover:bg-indigo-50 font-medium px-5 py-2 rounded-lg shadow-sm transition flex items-center gap-2 cursor-pointer text-sm">
+                        <i class="fa-solid fa-check"></i> 変更を反映する（新しい「3-○ 割り当て結果」を作成）
                     </button>
                     <button type="button" onclick="applyAndGoExport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg shadow transition flex items-center gap-2 cursor-pointer text-sm">
                         <i class="fa-solid fa-file-excel"></i> 変更を反映してExcel出力へ進む<span class="ml-1 px-1.5 py-0.5 rounded bg-white/25 text-[11px]">（推奨）</span> <i class="fa-solid fa-arrow-right"></i>
@@ -1813,13 +1814,13 @@
                             <th rowspan="2" class="${thBase} border-l-2 border-slate-300">鍵開け</th>
                             <th rowspan="2" class="${thBase}">鍵閉め</th>
                             <th rowspan="2" class="${thBase}">金庫チェック</th>
-                            <th rowspan="2" class="px-3 py-2.5 font-semibold bg-red-50 text-red-800 whitespace-nowrap text-center">鍵1保持者</th>
-                            <th rowspan="2" class="px-3 py-2.5 font-semibold bg-amber-50 text-amber-800 whitespace-nowrap text-center">鍵2保持者</th>
-                            <th rowspan="2" class="px-3 py-2.5 font-semibold bg-blue-50 text-blue-800 whitespace-nowrap text-center">鍵3保持者</th>
+                            <th colspan="2" class="px-3 py-2 font-semibold bg-red-50 text-slate-800 whitespace-nowrap text-center border-t-4 border-red-400 border-l-2 border-l-slate-300">鍵No.1 (赤)</th>
+                            <th colspan="2" class="px-3 py-2 font-semibold bg-amber-50 text-slate-800 whitespace-nowrap text-center border-t-4 border-amber-400 border-l-2 border-l-slate-300">鍵No.2 (黄)</th>
+                            <th colspan="2" class="px-3 py-2 font-semibold bg-blue-50 text-slate-800 whitespace-nowrap text-center border-t-4 border-blue-400 border-l-2 border-l-slate-300">鍵No.3 (青)</th>
                             <th rowspan="2" class="${thBase}">固定</th>
                             <th rowspan="2" class="${thBase} min-w-[180px]">判定（NG理由）</th>
                         </tr>
-                        <tr>${shiftNameThs}</tr>`;
+                        <tr>${shiftNameThs}${[['bg-red-50'], ['bg-amber-50'], ['bg-blue-50']].map(([c]) => `<th class="px-2 py-1.5 text-[11px] whitespace-nowrap text-center ${c} text-slate-600 border-l-2 border-slate-300">引渡者</th><th class="px-2 py-1.5 text-[11px] whitespace-nowrap text-center ${c} text-slate-600">引受者</th>`).join('')}</tr>`;
                 }
  
                 if (!shiftResult || shiftResult.length === 0) {
@@ -1842,7 +1843,7 @@
                     let makeOptions = (currentVal) => {
                         let opts = staffNames.map(n => {
                             let shiftName = dayShifts[n] || "公休";
-                            let label = `${n} (${shiftName})`;
+                            let label = `${n} ${shiftName}`;
                             return `<option value="${n}" ${currentVal === n ? 'selected' : ''}>${label}</option>`;
                         }).join('');
                         opts += `<option value="${UNSET}" ${currentVal === UNSET ? 'selected' : ''}>${UNSET}</option>`;
@@ -1853,7 +1854,7 @@
                         let opts = staffNames.map(n => {
                             const sv = dayShifts[n] || "公休";
                             const ok = !RULES.safeLateOnly || canSafeShift(sv);
-                            return `<option value="${n}" ${currentVal === n ? 'selected' : ''} ${ok || currentVal === n ? '' : 'disabled'}>${n} (${sv})${ok ? '' : ' ×遅番以外'}</option>`;
+                            return `<option value="${n}" ${currentVal === n ? 'selected' : ''} ${ok || currentVal === n ? '' : 'disabled'}>${n} ${sv}${ok ? '' : ' ×'}</option>`;
                         }).join('');
                         opts += `<option value="${UNSET}" ${currentVal === UNSET ? 'selected' : ''}>${UNSET}</option>`;
                         return opts;
@@ -1883,15 +1884,7 @@
                         <td class="px-3 py-2.5 text-center">
                             <select onchange="updateShiftField(${index}, 'safeStaff', this.value)" class="border border-slate-300 rounded p-1 text-xs bg-white text-center">${makeSafeOptions(item.safeRaw)}</select>
                         </td>
-                        <td class="px-3 py-2.5 text-center">
-                            <select onchange="updateHolderField(${index}, '鍵No.1', this.value)" class="border border-slate-300 rounded p-1 text-xs bg-white text-center">${makeHolderOptions(kh["鍵No.1"])}</select>
-                        </td>
-                        <td class="px-3 py-2.5 text-center">
-                            <select onchange="updateHolderField(${index}, '鍵No.2', this.value)" class="border border-slate-300 rounded p-1 text-xs bg-white text-center">${makeHolderOptions(kh["鍵No.2"])}</select>
-                        </td>
-                        <td class="px-3 py-2.5 text-center">
-                            <select onchange="updateHolderField(${index}, '鍵No.3', this.value)" class="border border-slate-300 rounded p-1 text-xs bg-white text-center">${makeHolderOptions(kh["鍵No.3"])}</select>
-                        </td>
+                        ${editKeyCells(index)}
                         <td class="px-3 py-2.5 text-center">
                             <input type="checkbox" ${item.locked ? 'checked' : ''} onchange="toggleLock(${index}, this.checked)" class="w-4 h-4 text-indigo-600 rounded border-slate-300 cursor-pointer">
                         </td>
@@ -2180,7 +2173,7 @@ let RULES = {
     safeLookahead: false, penOpen: 1000, penClose: 300, beam: 150,
     openPreferOn: true, openPrefer: "五家", openPreferWeight: 60,
     safeLateOnly: true, safeFullOk: true,
-    kw: { off: "公休,休日,有給,欠勤,方針,グランド,応援,店長会議,会議,ミーティング,MTG", early: "早", late: "遅,L,Ｌ", full: "フル" },
+    kw: { off: "公休,休日,有給,欠勤,方針,グランド,応援,店長会議,会議,ミーティング,MTG,研修", early: "早", late: "遅,L,Ｌ", full: "フル" },
     custom: []
 };
 const TASKS = [['open', '鍵開け'], ['close', '鍵閉め'], ['safe', '金庫チェック']];
@@ -2676,7 +2669,7 @@ function validateAll(res) {
         if (errs.length) it.note = `割当不可: ${errs.join(" / ")}`;
         else {
             const ok = [];
-            if (it.locked) ok.push("手動で固定");
+            if (it.manualEdited) ok.push("手動で修正"); else if (it.autoAdjusted) ok.push("自動修正で調整"); else if (it.locked) ok.push("固定");
             if (RULES.storeOpen && storePrev && it.openRaw && !holdPrev.includes(it.openRaw)) ok.push("鍵開けは前日に店舗へ置かれた鍵を使用");
             const sk = KEYS.filter(k => kh[k] === STORE_NAME);
             if (sk.length) ok.push(`${sk.join("・")}は店舗置き（翌日の鍵開け用）`);
@@ -2877,7 +2870,7 @@ function repairDays(res) {
             }));
             if (best) {
                 it.openRaw = best.o; it.closeRaw = best.c; it.safeRaw = best.s; it.keyHolders = best.k;
-                it.autoAdjusted = true;
+                it.autoAdjusted = true; it.locked = true;
                 score = best.sc; adjusted++; improved = true;
             } else restore();
             validateAll(res);
@@ -3170,13 +3163,13 @@ const _renderEditTableP3 = renderEditTable;
 renderEditTable = function () {
     _renderEditTableP3();
     const n = orderedStaff().length;
-    const col = { open: n + 1, close: n + 2, safe: n + 3, k1: n + 4, k2: n + 5, k3: n + 6 };
+    const col = { open: n + 1, close: n + 2, safe: n + 3, k1: [n + 4, n + 5], k2: [n + 6, n + 7], k3: [n + 8, n + 9] };
     document.querySelectorAll('#editTableBody tr').forEach((tr, i) => {
         const r = shiftResult[i]; if (!r) return;
         tr.classList.remove('bg-red-50');
         if (getDisplayStatus(r).status !== 'NG') return;
         const tds = tr.children, map = ngCellMap(r);
-        Object.keys(map).forEach(t => { const td = tds[col[t]]; if (td) td.classList.add(NG_CATS[map[t]].cell); });
+        Object.keys(map).forEach(t => [].concat(col[t]).forEach(ci => { const td = tds[ci]; if (td) td.classList.add(NG_CATS[map[t]].cell); }));
         const last = tds[tds.length - 1];
         if (last) last.innerHTML = `<div class="flex flex-wrap gap-1">${ngMsgs(r).map(ngChip).join('')}</div>`;
     });
@@ -3230,7 +3223,7 @@ s0RenderPreview = function () {
         `${st.fileName} ／ シート「${st.sheetName}」 ／ ${st.y}年${st.m}月（${st.lastDay}日分） ／ スタッフ${st.staffCount}名`;
 
     // 入力候補（表にある表記＋よく使う表記）
-    const opts = new Set(["早", "超早", "遅", "フル", "公休", "有給", "応援", "会議", "店長会議"]);
+    const opts = new Set(["早", "超早", "遅", "フル", "公休", "有給", "応援", "会議", "店長会議", "研修"]);
     st.aoa.forEach((row, r) => { if (r >= 4 && row.length > 1) row.slice(3).forEach(v => { const t = s0Str(v); if (t) opts.add(t); }); });
 
     let html = "";
@@ -3380,7 +3373,7 @@ renderRulesPanel = function () {
     el.insertAdjacentHTML('afterbegin', `
       <div class="bg-white p-5 rounded-xl shadow-sm border-2 border-indigo-300 space-y-3 text-xs text-slate-600">
         <h3 class="font-bold text-slate-700 text-sm flex items-center gap-2"><i class="fa-solid fa-vault text-amber-600"></i>金庫チェックの担当条件</h3>
-        <label class="flex items-start gap-1.5 cursor-pointer"><input type="checkbox" class="mt-0.5" ${RULES.safeLateOnly ? 'checked' : ''} onchange="setRule('safeLateOnly', this.checked)"><span><b>遅番以外のシフトの人は金庫チェックができない</b>（早番・超早の人、会議・店長会議・応援・休みなど店舗にいない人には割り当てない。遅番がいない日は担当なしでNG表示）</span></label>
+        <label class="flex items-start gap-1.5 cursor-pointer"><input type="checkbox" class="mt-0.5" ${RULES.safeLateOnly ? 'checked' : ''} onchange="setRule('safeLateOnly', this.checked)"><span><b>遅番以外のシフトの人は金庫チェックができない</b>（早番・超早の人、会議・店長会議・研修・応援・休みなど店舗にいない人には割り当てない。遅番がいない日は担当なしでNG表示）</span></label>
         <label class="flex items-start gap-1.5 cursor-pointer ml-5"><input type="checkbox" class="mt-0.5" ${RULES.safeFullOk !== false ? 'checked' : ''} onchange="setRule('safeFullOk', this.checked)"><span><b>「フル」の人は金庫チェックできる</b>（遅番として扱う）</span></label>
         <hr class="border-slate-200">
         <h3 class="font-bold text-slate-700 text-sm flex items-center gap-2"><i class="fa-solid fa-door-open text-indigo-600"></i>鍵開けの優先担当</h3>
@@ -3556,7 +3549,7 @@ autoFix = function () { _lastFixMsg = ""; _autoFixP4(); };
 </style>
 <script>
 // ===== 追加：シフトの手入力（自由に文字を打てる）を STEP0・STEP1 共通で =====
-const SHIFT_SUGGEST = ["早", "超早", "遅", "フル", "公休", "有給", "応援", "会議", "店長会議", "グランド", "方針", "欠勤"];
+const SHIFT_SUGGEST = ["早", "超早", "遅", "フル", "公休", "有給", "応援", "会議", "店長会議", "研修", "グランド", "方針", "欠勤"];
 
 function shiftInputCls(v, changed) {
     return "shift-in w-12 px-0.5 py-1 text-center text-xs font-bold rounded border border-slate-200 hover:border-indigo-400 focus:outline-none " + s0CellCls(v, changed);
@@ -3670,6 +3663,7 @@ function normShift(v) {
     if (s.includes("有")) return "有給";
     if (s.includes("応")) return "応援";
     if (/会|議|MTG|ミーティング/i.test(s)) return "会議";
+    if (s.includes("研")) return "研修";
     if (s.includes("グ")) return "グランド";
     if (s.includes("方")) return "方針";
     if (s.includes("欠")) return "欠勤";
@@ -4514,6 +4508,9 @@ function exportToCheckStyle() {
     const dowColor = d => d === "日" ? "#dc2626" : d === "土" ? "#2563eb" : "#0f172a";
     const nKeyCols = 12, nRight = staff.length + 5;
     const totalCols = 1 + nKeyCols + 1 + nRight;   // A列 + 鍵12列 + 区切り + 右側
+    // 列の幅（px）：文字がセルに収まるよう広めに。Excelでも同じ幅で開くよう pt でも指定
+    const colPx = [150, ...new Array(nKeyCols).fill(82), 28, ...staff.map(() => 115), 150, 150, 150, 95, 660];
+    const colgroupHtml = colPx.map(px => `<col width="${px}" style="mso-width-source:userset;width:${Math.round(px * 0.75)}pt;">`).join('');
 
     let html = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
@@ -4529,19 +4526,22 @@ function exportToCheckStyle() {
         .data-cell { font-size: 24pt; font-family: 'MS PGothic', sans-serif; }
         .gap { border: none; width: 24px; background: #ffffff; }
         .r-head { font-weight: bold; font-size: 16pt; font-family: 'Meiryo', sans-serif; }
-        .r-cell { font-size: 16pt; font-family: 'Meiryo', sans-serif; white-space: nowrap; }
-        .r-note { font-size: 12pt; font-family: 'Meiryo', sans-serif; text-align: left; }
+        .r-cell { font-size: 16pt; font-family: 'Meiryo', sans-serif; white-space: normal; line-height: 1.25; }
+        .r-note { font-size: 13pt; font-family: 'Meiryo', sans-serif; text-align: left; white-space: normal; line-height: 1.5; vertical-align: middle; }
+        td { mso-number-format: "\@"; }
+        .note-text, .r-head { white-space: normal; }
     </style></head>
     <body>
     <table>
-        <tr><td colspan="${1 + nKeyCols}" class="red-title">${detectedExcelTitle}</td><td class="gap"></td>
+        ${colgroupHtml}
+        <tr style="height:96pt;"><td colspan="${1 + nKeyCols}" class="red-title">${detectedExcelTitle}</td><td class="gap"></td>
             <td colspan="${nRight}" style="background:#1e293b;color:#ffffff;font-weight:bold;font-size:24pt;text-align:left;font-family:Meiryo;">シフト状況・担当の確認${v ? `（${v.label} 割り当て結果）` : ''}</td></tr>
-        <tr><td colspan="${1 + nKeyCols}" class="note-text">＊防犯管理上、いつ、誰が、どの鍵を持っているのか明確にし、受渡し時には必ず両者（引渡者・引受者）が押印して下さい。</td><td class="gap"></td>
+        <tr style="height:62pt;"><td colspan="${1 + nKeyCols}" class="note-text">＊防犯管理上、いつ、誰が、どの鍵を持っているのか明確にし、受渡し時には必ず両者（引渡者・引受者）が押印して下さい。</td><td class="gap"></td>
             <td colspan="${nRight}" class="r-note" style="font-size:14pt;">色の見方：<span style="background:#93c5fd;">　超早　</span> <span style="background:#dbeafe;">　早　</span> <span style="background:#fde68a;">　遅　</span> <span style="background:#ddd6fe;">　フル　</span> <span style="background:#f1f5f9;color:#94a3b8;">　休・応援・会議など　</span></td></tr>
-        <tr><td colspan="${1 + nKeyCols}" class="note-text">＊金庫の鍵は、必ず営業中は携行し、退勤時は持ち帰る運用として下さい。</td><td class="gap"></td>
+        <tr style="height:62pt;"><td colspan="${1 + nKeyCols}" class="note-text">＊金庫の鍵は、必ず営業中は携行し、退勤時は持ち帰る運用として下さい。</td><td class="gap"></td>
             <td colspan="${nRight}" class="r-note" style="font-size:14pt;">鍵の欄：色の濃いマス＝その日に鍵を受け取る人（引受者）／ 判定：<span style="background:#dcfce7;color:#15803d;font-weight:bold;">　OK　</span> ${Object.values(CAT).map(c => `<span style="background:${c.bg};color:${c.fg};font-weight:bold;">　${c.name}　</span>`).join(' ')}</td></tr>
         <tr><td colspan="${1 + nKeyCols}" style="border: 1px solid #000;">&nbsp;</td><td class="gap"></td><td colspan="${nRight}" style="border:none;">&nbsp;</td></tr>
-        <tr class="header-main">
+        <tr class="header-main" style="height:72pt;">
             <td rowspan="2" class="col-a" style="background:#f2f2f2;">鍵の<br>種類<br>・No.</td>
             ${KEY.map(k => `<td colspan="4" style="background:${k.head};color:${k.text};">${k.label}</td>`).join('')}
             <td class="gap" rowspan="2"></td>
@@ -4552,7 +4552,7 @@ function exportToCheckStyle() {
             <td rowspan="2" class="r-head" style="background:#e2e8f0;">判定</td>
             <td rowspan="2" class="r-head" style="background:#e2e8f0;min-width:420px;">NGの内容・確認ポイント</td>
         </tr>
-        <tr class="sub-header">
+        <tr class="sub-header" style="height:40pt;">
             ${KEY.map(k => `<td colspan="2" style="background:${k.soft};">引渡者</td><td colspan="2" style="background:${k.soft};">引受者</td>`).join('')}
             ${staff.map(n => `<td class="r-head" style="background:#f8fafc;min-width:90px;">${esc(n)}</td>`).join('')}
         </tr>`;
@@ -4592,8 +4592,10 @@ function exportToCheckStyle() {
             ? msgs.map(m => { const c = CAT[ngCat(m)]; return `<span style="background:${c.bg};color:${c.fg};font-weight:bold;">【${c.name}】${esc(m)}</span>`; }).join('<br>')
             : `<span style="color:#475569;">${esc(disp.note || "")}</span>`;
 
+        const noteLines = msgs.reduce((t, m) => t + Math.ceil((m.length + 10) / 36), 0);   // 折り返し後の行数の目安
+        const rowH = Math.max(56, noteLines * 21 + 16);
         html += `
-        <tr>
+        <tr style="height:${rowH}pt;">
             <td class="col-a" style="background:${isNG ? '#fecaca' : '#ffffff'};color:${dowColor(r.dayOfWeek)};font-weight:bold;">${dayNum}日<span style="font-size:14pt;">(${esc(r.dayOfWeek)})</span></td>
             ${keyCells}
             <td class="gap"></td>
@@ -4611,7 +4613,7 @@ function exportToCheckStyle() {
     const stats = orderedStaff().map(s => `<td class="r-cell" style="background:#f8fafc;">鍵開け${s.openCount}<br>鍵閉め${s.closeCount}<br>金庫${s.safeCount}</td>`).join('');
     html += `
         <tr><td colspan="${1 + nKeyCols}" style="border:none;">&nbsp;</td><td class="gap"></td><td colspan="${nRight}" style="border:none;">&nbsp;</td></tr>
-        <tr><td colspan="${1 + nKeyCols}" style="border:none;"></td><td class="gap"></td>
+        <tr style="height:70pt;"><td colspan="${1 + nKeyCols}" style="border:none;"></td><td class="gap"></td>
             ${stats}
             <td colspan="3" class="r-cell" style="background:#f1f5f9;font-weight:bold;">担当回数（左の各人）</td>
             <td class="r-cell" style="font-weight:bold;${ngCount ? 'background:#fee2e2;color:#dc2626;' : 'background:#dcfce7;color:#15803d;'}">NG<br>${ngCount}日</td>
@@ -4750,7 +4752,7 @@ function aiPromptText() {
 ・1行目：A1セルに「${y}年${m}月 シフト一覧」
 ・2行目：A2セルに「担当者名」、B2セルから右へ 1, 2, 3 … ${last} と日付を数字だけで並べる
 ・3行目以降：A列に氏名、各日付の列にその日のシフトを1マスずつ入れる
-・シフトは元の表記のまま（早・超早・遅・フル・公休・有給・応援・会議・店長会議・時刻表記 など）
+・シフトは元の表記のまま（早・超早・遅・フル・公休・有給・応援・会議・店長会議・研修・時刻表記 など）
 ・休み・空欄は「公休」と入れる
 ・色・罫線・結合セル・合計欄・余計な行や列は不要
 
@@ -4816,6 +4818,378 @@ function renderStep0Guide() {
     const _sw = switchTab;
     switchTab = function (id) { _sw(id); if (id === 'tab0') renderStep0Guide(); };
 })();
+</script>
+<script>
+// ===== 手動修正：鍵は「引渡者 → 引受者」で直す =====
+const EDIT_KEYS = ["鍵No.1", "鍵No.2", "鍵No.3"];
+function prevHoldersOf(i) {
+    const it = shiftResult[i]; if (!it) return {};
+    return i === 0 ? (it.prevKeyHolders || it.keyHolders || {}) : (shiftResult[i - 1].keyHolders || {});
+}
+function editKeyCells(i) {
+    const it = shiftResult[i]; if (!it) return "";
+    const kh = it.keyHolders || {}, pk = prevHoldersOf(i), sh = it.shiftsByStaff || {};
+    const names = orderedStaff().map(s => s.name);
+    const at = n => n === STORE_NAME || isWorkingShift(sh[n] || "公休");
+    const sel = "border border-slate-300 rounded p-1 text-xs bg-white text-center max-w-[7.5rem]";
+    return EDIT_KEYS.map(k => {
+        const giver = pk[k] || "", now = kh[k] || "", recv = now === giver ? "" : now;
+        const giverHtml = i === 0
+            ? `<select onchange="setStartHolder('${k}', this.value)" title="月初（前月末）に鍵を持っている人" class="${sel}">${[...names, STORE_NAME].map(n => `<option value="${esc(n)}" ${n === giver ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select><div class="text-[10px] text-slate-400">月初の保持者</div>`
+            : `<select onchange="setGiver(${i}, '${k}', this.value)" title="前日の夜に鍵を持っている人（変えると前日の引受者も直ります）" class="${sel} bg-slate-50">${[...names, STORE_NAME].map(n => `<option value="${esc(n)}" ${n === giver ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>${giver && giver !== STORE_NAME && !at(giver) ? `<div class="text-[10px] text-red-500 font-bold">不在(${esc(sh[giver] || '公休')})</div>` : ''}`;
+        const opts = [`<option value="" ${recv === '' ? 'selected' : ''}>―（なし）</option>`]
+            .concat(names.filter(n => n !== giver).map(n => {
+                const ok = at(n);
+                return `<option value="${esc(n)}" ${n === recv ? 'selected' : ''} ${ok || n === recv ? '' : 'disabled'}>${esc(n)} ${esc(sh[n] || '公休')}${ok ? '' : ' ×'}</option>`;
+            }))
+            .concat(giver === STORE_NAME ? [] : [`<option value="${STORE_NAME}" ${recv === STORE_NAME ? 'selected' : ''}>店舗</option>`]);
+        return `<td class="px-2 py-2 text-center whitespace-nowrap border-l-2 border-slate-300">${giverHtml}</td>
+                <td class="px-2 py-2 text-center whitespace-nowrap"><select onchange="setReceiver(${i}, '${k}', this.value)" class="${sel} ${recv ? 'font-bold border-2 border-indigo-500 bg-indigo-50' : 'text-slate-400'}">${opts.join('')}</select></td>`;
+    }).join('');
+}
+// 鍵の持ち主を old → nw に変えたら、そのあと「受け渡しなし」で続いている日も一緒に変える
+function carryHolder(from, k, old, nw) {
+    for (let j = from; j < shiftResult.length; j++) {
+        const r = shiftResult[j]; if (!r || r.locked) break;
+        if ((r.keyHolders || {})[k] !== old) break;
+        r.keyHolders[k] = nw;
+    }
+}
+function afterKeyEdit() {
+    try { buildShiftIndex(); validateAll(shiftResult); } catch (e) { }
+    renderEditTable();
+}
+function setReceiver(i, k, v) {
+    const it = shiftResult[i]; if (!it) return;
+    const giver = prevHoldersOf(i)[k] || "";
+    const old = it.keyHolders[k];
+    const nw = v || giver;
+    if (old === nw) return;
+    it.keyHolders[k] = nw;
+    it.locked = true;
+    carryHolder(i + 1, k, old, nw);
+    afterKeyEdit();
+    try { toast(v ? `${it.date}：${k} を ${giver} → ${v} に受け渡し` : `${it.date}：${k} は ${giver} が持ち続ける（受け渡しなし）`, true); } catch (e) { }
+}
+function setStartHolder(k, v) {
+    const it = shiftResult[0]; if (!it) return;
+    it.prevKeyHolders = it.prevKeyHolders || { ...it.keyHolders };
+    const old = it.prevKeyHolders[k];
+    if (old === v) return;
+    it.prevKeyHolders[k] = v;
+    carryHolder(0, k, old, v);
+    afterKeyEdit();
+}
+</script>
+<script>
+// 引渡者を変える ＝ 前日の夜に鍵を持っている人を変える（前日の引受者として記録）
+function setGiver(i, k, v) {
+    if (i === 0) { setStartHolder(k, v); return; }
+    const prevRow = shiftResult[i - 1], it = shiftResult[i];
+    if (!prevRow || !it) return;
+    const old = prevRow.keyHolders[k];
+    if (old === v) return;
+    const noHandover = it.keyHolders[k] === old;        // その日が「受け渡しなし」なら、新しい引渡者が持ち続ける
+    prevRow.keyHolders[k] = v;
+    prevRow.locked = true;
+    if (noHandover) carryHolder(i, k, old, v);
+    afterKeyEdit();
+    try { toast(`${prevRow.date} の夜は ${k} を ${v} が持っている形にしました（${prevRow.date} の引受者も ${v} に変わります）`, true); } catch (e) { }
+}
+</script>
+<style>
+/* ===== 手動修正の表：横スクロールなしで収まるように詰める ===== */
+#tab4 table { width: 100%; }
+#tab4 #editTableHead th, #tab4 #editTableBody td { padding: 3px 2px !important; }
+#tab4 #editTableHead th { font-size: 11px; white-space: normal !important; line-height: 1.2; }
+#tab4 #editTableBody select { width: 4.6rem !important; max-width: 4.6rem !important; font-size: 11px !important; padding: 2px 1px !important; }
+#tab4 #editTableBody td > div.text-\[10px\] { font-size: 9px; }
+#tab4 #editTableBody span.inline-block { min-width: 0 !important; padding: 2px 3px !important; font-size: 11px !important; }
+#tab4 #editTableBody td:first-child { font-size: 11px; white-space: nowrap; }
+#tab4 #editTableBody td:last-child { min-width: 0 !important; max-width: 10rem; white-space: normal !important; }
+#tab4 #editTableBody td:last-child span { font-size: 10px !important; padding: 1px 3px !important; }
+#tab4 #editTableHead th.min-w-\[180px\] { min-width: 0 !important; }
+#tab4.hide-shift .ed-shift { display: none; }
+</style>
+<script>
+// シフト列の表示・非表示（狭い画面では隠して横スクロールをなくす）
+let editShowShift = window.innerWidth >= 1100;
+function setEditShowShift(v) { editShowShift = !!v; applyEditShiftCols(); }
+function applyEditShiftCols() {
+    const sec = document.getElementById('tab4'); if (!sec) return;
+    sec.classList.toggle('hide-shift', !editShowShift);
+    const cb = document.getElementById('editShowShift'); if (cb) cb.checked = editShowShift;
+}
+(function () {
+    const tb = document.getElementById('editToolbar');
+    if (tb) tb.insertAdjacentHTML('afterbegin', `<label class="flex items-center gap-1.5 cursor-pointer font-bold text-slate-700"><input type="checkbox" id="editShowShift" ${editShowShift ? 'checked' : ''} onchange="setEditShowShift(this.checked)"> シフトの列を表示する</label><span class="text-slate-300">｜</span>`);
+})();
+const _renderEditTableCompact = renderEditTable;
+renderEditTable = function () {
+    _renderEditTableCompact();
+    const n = orderedStaff().length;
+    const rows = document.querySelectorAll('#editTableHead tr');
+    if (rows[0] && rows[0].children[1]) rows[0].children[1].classList.add('ed-shift');                 // 「シフト状況」の見出し
+    if (rows[1]) [...rows[1].children].slice(0, n).forEach(th => th.classList.add('ed-shift'));        // 人の名前の見出し
+    document.querySelectorAll('#editTableBody tr').forEach(tr => [...tr.children].slice(1, 1 + n).forEach(td => td.classList.add('ed-shift')));
+    applyEditShiftCols();
+};
+</script>
+<style>
+/* ===== 手動修正：シフトは日付の下にまとめて表示（横スクロールなし） ===== */
+#tab4 table.edit-compact { width: 100%; table-layout: auto; }
+#tab4 table.edit-compact th, #tab4 table.edit-compact td { padding: 4px 4px !important; vertical-align: middle; }
+#tab4 table.edit-compact select { width: 4.8rem !important; max-width: 4.8rem !important; font-size: 11px !important; padding: 2px 1px !important; }
+#tab4 .ed-chip { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 4px; border-radius: 4px; margin: 1px; white-space: nowrap; line-height: 1.4; }
+#tab4 .ed-role { display: flex; align-items: center; gap: 3px; margin: 2px 0; border-radius: 6px; padding: 1px 2px; }
+#tab4 .ed-role b { font-size: 10px; width: 1.6rem; text-align: right; color: #475569; }
+#tab4 .ed-key { display: flex; flex-direction: column; align-items: center; gap: 1px; border-radius: 6px; padding: 2px; }
+#tab4 .ed-key .lbl { font-size: 9px; color: #64748b; line-height: 1; }
+#tab4 td.ed-judge { max-width: 11rem; white-space: normal !important; text-align: left; }
+#tab4 td.ed-judge span { font-size: 10px !important; padding: 1px 3px !important; }
+#editShowShiftWrap { display: none !important; }
+#tab4 table.edit-compact td:first-child { white-space: normal !important; }
+#tab4 .ed-key div { font-size: 9px !important; line-height: 1.15; font-weight: 700; }
+#tab4 .ed-key div.text-red-500 { color: #ef4444; }
+</style>
+<script>
+const ED_CHIP = v => {
+    const s = String(v || "公休").trim();
+    if (!isWorkingShift(s)) return "background:#f1f5f9;color:#94a3b8;";
+    if (s.includes("超早")) return "background:#bfdbfe;color:#1e3a8a;";
+    if (s.includes("早") || isEarlyByTime(s)) return "background:#e0f2fe;color:#075985;";
+    if (isFullShift(s)) return "background:#ede9fe;color:#5b21b6;";
+    if (isLateShift(s)) return "background:#fef3c7;color:#92400e;";
+    return "background:#f8fafc;color:#334155;";
+};
+const ED_TINT = { key: "#ffe4e6", shift: "#ede9fe", safe: "#fef3c7", rule: "#e0f2fe", unset: "#fecaca" };
+
+renderEditTable = function () {
+    try {
+        const body = document.getElementById('editTableBody'), head = document.getElementById('editTableHead');
+        if (!body || !head) return;
+        const table = body.closest('table'); if (table) table.classList.add('edit-compact');
+        if ((!shiftResult || !shiftResult.length) && rawShiftData && rawShiftData.length) generateShift();
+        const names = orderedStaff().map(s => s.name);
+        const keyHead = (c, b, t) => `<th class="text-center whitespace-nowrap" style="background:${c};border-top:4px solid ${b};font-size:11px;">${t}<div style="font-size:9px;font-weight:normal;color:#64748b;">引渡者 → 引受者</div></th>`;
+        head.innerHTML = `<tr>
+            <th class="text-center bg-slate-100" style="font-size:11px;">日付・シフト<div style="font-size:9px;font-weight:normal;color:#64748b;">固定</div></th>
+            <th class="text-center whitespace-nowrap" style="font-size:11px;background:#e0f2fe;">鍵開け</th>
+            <th class="text-center whitespace-nowrap" style="font-size:11px;background:#fef3c7;">鍵閉め</th>
+            <th class="text-center whitespace-nowrap" style="font-size:11px;background:#fde68a;">金庫<br>チェック</th>
+            ${keyHead('#fef2f2', '#f87171', '鍵No.1 (赤)')}${keyHead('#fffbeb', '#fbbf24', '鍵No.2 (黄)')}${keyHead('#eff6ff', '#60a5fa', '鍵No.3 (青)')}
+            <th class="text-center bg-slate-100" style="font-size:11px;">判定（NG理由）</th></tr>`;
+        body.innerHTML = "";
+        if (!shiftResult || !shiftResult.length) return;
+        const ngOnly = (document.getElementById('editNgOnly') || {}).checked;
+        const sel = "border border-slate-300 rounded bg-white text-center";
+
+        shiftResult.forEach((it, i) => {
+            if (!it) return;
+            const sh = it.shiftsByStaff || {};
+            const disp = getDisplayStatus(it), isNG = disp.status === "NG";
+            const map = isNG ? ngCellMap(it) : {};
+            const tint = t => map[t] ? `background:${ED_TINT[map[t]]};outline:2px solid ${ED_TINT[map[t]] === '#fecaca' ? '#f87171' : 'transparent'};` : "";
+            const dc = it.dayOfWeek === "日" ? "#dc2626" : it.dayOfWeek === "土" ? "#2563eb" : "#0f172a";
+
+            const chips = names.map(n => `<span class="ed-chip" style="${ED_CHIP(sh[n])}" title="${esc(n)}：${esc(sh[n] || '公休')}">${esc(n)} ${esc(sh[n] || '公休')}</span>`).join('');
+            const roleOpts = (cur, safe) => names.map(n => {
+                const v = sh[n] || "公休";
+                const ok = !safe || !RULES.safeLateOnly || canSafeShift(v);
+                return `<option value="${esc(n)}" ${cur === n ? 'selected' : ''} ${ok || cur === n ? '' : 'disabled'}>${esc(n)} ${esc(v)}${ok ? '' : ' ×'}</option>`;
+            }).join('') + `<option value="${UNSET}" ${cur === UNSET ? 'selected' : ''}>未設定</option>`;
+            const role = (field, cur, t, safe) => `<td class="text-center" style="${tint(t)}"><select onchange="updateShiftField(${i}, '${field}', this.value); afterKeyEdit();" class="${sel}">${roleOpts(cur, safe)}</select></td>`;
+
+            // 鍵：引渡者 → 引受者（既存の部品から選択欄だけ取り出して縦に並べる）
+            const tmp = document.createElement('tbody');
+            tmp.innerHTML = `<tr>${editKeyCells(i)}</tr>`;
+            const cells = [...tmp.querySelectorAll('td')];
+            const keyCol = (ki) => {
+                const g = cells[ki * 2], r = cells[ki * 2 + 1];
+                return `<td class="text-center"><div class="ed-key" style="${tint('k' + (ki + 1))}">
+                    <span class="lbl">引渡者</span>${g ? g.innerHTML : ''}
+                    <span style="color:#94a3b8;font-size:10px;line-height:1;">↓</span>
+                    <span class="lbl">引受者</span>${r ? r.innerHTML : ''}</div></td>`;
+            };
+            const judge = isNG
+                ? `<div style="color:#dc2626;font-weight:800;font-size:12px;">NG ${ngDots(it)}</div><div class="flex flex-wrap gap-0.5 mt-0.5">${ngMsgs(it).map(ngChip).join('')}</div>`
+                : `<div style="color:#059669;font-weight:800;font-size:12px;">OK</div><div style="font-size:10px;color:#64748b;">${esc(disp.note || '')}</div>`;
+
+            const tr = document.createElement('tr');
+            if (isNG) tr.style.background = "#fff1f2";
+            tr.innerHTML = `
+                <td style="min-width:10.5rem;max-width:12rem;">
+                    <div class="flex items-center justify-between gap-1"><span style="font-weight:800;font-size:12px;color:${dc};">${esc(it.date)}(${esc(it.dayOfWeek)})</span>
+                    <label style="font-size:10px;color:#64748b;" class="flex items-center gap-0.5 cursor-pointer"><input type="checkbox" ${it.locked ? 'checked' : ''} onchange="toggleLock(${i}, this.checked)">固定</label></div>
+                    <div style="margin-top:2px;">${chips}</div>
+                </td>
+                ${role('openStaff', it.openRaw, 'open', false)}${role('closeStaff', it.closeRaw, 'close', false)}${role('safeStaff', it.safeRaw, 'safe', true)}
+                ${keyCol(0)}${keyCol(1)}${keyCol(2)}
+                <td class="ed-judge">${judge}</td>`;
+            if (ngOnly && !isNG) tr.classList.add('hidden');
+            tr.style.animationDelay = Math.min(i * 12, 350) + 'ms';
+            body.appendChild(tr);
+        });
+
+        const c = document.getElementById('editNgCount');
+        if (c) { const n = ngScore(shiftResult).days; c.innerHTML = n ? `<span class="font-bold text-red-600">NG ${n}日</span>（赤い行）` : '<span class="font-bold text-emerald-600">NGなし</span>'; }
+        const lg = document.getElementById('editNgLegend'); if (lg) lg.innerHTML = ngLegend(shiftResult);
+    } catch (err) { console.error("renderEditTable error:", err); }
+};
+// 「シフトの列を表示する」切替は不要になったので隠す
+(function () { const cb = document.getElementById('editShowShift'); if (cb && cb.parentElement) { cb.parentElement.id = 'editShowShiftWrap'; const sep = cb.parentElement.nextElementSibling; if (sep) sep.style.display = 'none'; } const t4 = document.getElementById('tab4'); if (t4) t4.classList.remove('hide-shift'); })();
+applyEditShiftCols = function () { const t4 = document.getElementById('tab4'); if (t4) t4.classList.remove('hide-shift'); };
+</script>
+<style>
+#tab4 #editTableBody select { width: 4rem !important; max-width: 4rem !important; font-size: 10.5px !important; }
+#tab4 table.edit-compact th, #tab4 table.edit-compact td { padding: 3px 2px !important; }
+#tab4 tr.ed-ngrow td { padding: 2px 6px 6px !important; border-top: none !important; }
+#tab4 .ed-badge { display: inline-block; font-size: 10px; font-weight: 800; padding: 0 5px; border-radius: 9999px; }
+</style>
+<script>
+// ===== 手動修正：鍵は結果画面と同じ「引渡者｜引受者」の横並び。NG理由は日の下の細い行に =====
+renderEditTable = function () {
+    try {
+        const body = document.getElementById('editTableBody'), head = document.getElementById('editTableHead');
+        if (!body || !head) return;
+        const table = body.closest('table'); if (table) table.classList.add('edit-compact');
+        if ((!shiftResult || !shiftResult.length) && rawShiftData && rawShiftData.length) generateShift();
+        const names = orderedStaff().map(s => s.name);
+        const K = [["鍵No.1 (赤)", "#fef2f2", "#f87171"], ["鍵No.2 (黄)", "#fffbeb", "#fbbf24"], ["鍵No.3 (青)", "#eff6ff", "#60a5fa"]];
+        head.innerHTML = `
+          <tr>
+            <th rowspan="2" class="text-center bg-slate-100" style="font-size:11px;">日付・シフト</th>
+            <th rowspan="2" class="text-center whitespace-nowrap" style="font-size:11px;background:#e0f2fe;">鍵開け</th>
+            <th rowspan="2" class="text-center whitespace-nowrap" style="font-size:11px;background:#fef3c7;">鍵閉め</th>
+            <th rowspan="2" class="text-center" style="font-size:11px;background:#fde68a;">金庫<br>チェック</th>
+            ${K.map(([t, bg, bd]) => `<th colspan="2" class="text-center whitespace-nowrap" style="font-size:11px;background:${bg};border-top:4px solid ${bd};border-left:2px solid #cbd5e1;">${t}</th>`).join('')}
+          </tr>
+          <tr>${K.map(([t, bg]) => `<th class="text-center whitespace-nowrap" style="font-size:10px;background:${bg};color:#475569;border-left:2px solid #cbd5e1;">引渡者</th><th class="text-center whitespace-nowrap" style="font-size:10px;background:${bg};color:#475569;">引受者</th>`).join('')}</tr>`;
+        body.innerHTML = "";
+        if (!shiftResult || !shiftResult.length) return;
+        const ngOnly = (document.getElementById('editNgOnly') || {}).checked;
+        const sel = "border border-slate-300 rounded bg-white text-center";
+
+        shiftResult.forEach((it, i) => {
+            if (!it) return;
+            const sh = it.shiftsByStaff || {};
+            const disp = getDisplayStatus(it), isNG = disp.status === "NG";
+            const map = isNG ? ngCellMap(it) : {};
+            const tint = t => map[t] ? `background:${ED_TINT[map[t]]};` : "";
+            const dc = it.dayOfWeek === "日" ? "#dc2626" : it.dayOfWeek === "土" ? "#2563eb" : "#0f172a";
+            const chips = names.map(n => `<span class="ed-chip" style="${ED_CHIP(sh[n])}" title="${esc(n)}：${esc(sh[n] || '公休')}">${esc(n)} ${esc(sh[n] || '公休')}</span>`).join('');
+            const roleOpts = (cur, safe) => names.map(n => {
+                const v = sh[n] || "公休";
+                const ok = !safe || !RULES.safeLateOnly || canSafeShift(v);
+                return `<option value="${esc(n)}" ${cur === n ? 'selected' : ''} ${ok || cur === n ? '' : 'disabled'}>${esc(n)} ${esc(v)}${ok ? '' : ' ×'}</option>`;
+            }).join('') + `<option value="${UNSET}" ${cur === UNSET ? 'selected' : ''}>未設定</option>`;
+            const role = (field, cur, t, safe) => `<td class="text-center" style="${tint(t)}"><select onchange="updateShiftField(${i}, '${field}', this.value); afterKeyEdit();" class="${sel}">${roleOpts(cur, safe)}</select></td>`;
+
+            const tmp = document.createElement('tbody');
+            tmp.innerHTML = `<tr>${editKeyCells(i)}</tr>`;
+            const cells = [...tmp.querySelectorAll('td')];
+            const keyTds = [0, 1, 2].map(ki => {
+                const g = cells[ki * 2], r = cells[ki * 2 + 1], t = tint('k' + (ki + 1));
+                return `<td class="text-center" style="border-left:2px solid #cbd5e1;${t}">${g ? g.innerHTML : ''}</td><td class="text-center" style="${t}">${r ? r.innerHTML : ''}</td>`;
+            }).join('');
+
+            const tr = document.createElement('tr');
+            tr.dataset.idx = i;
+            if (isNG) tr.style.background = "#fff1f2";
+            tr.innerHTML = `
+                <td style="min-width:8.5rem;max-width:10rem;">
+                    <div class="flex items-center gap-1 flex-wrap"><span style="font-weight:800;font-size:12px;color:${dc};">${esc(it.date)}(${esc(it.dayOfWeek)})</span>
+                      <span class="ed-badge" style="${isNG ? 'background:#fee2e2;color:#dc2626;' : 'background:#dcfce7;color:#059669;'}">${disp.status}</span>${isNG ? ngDots(it) : ''}
+                      <label style="font-size:10px;color:#64748b;margin-left:auto;" class="flex items-center gap-0.5 cursor-pointer"><input type="checkbox" ${it.locked ? 'checked' : ''} onchange="toggleLock(${i}, this.checked)">固定</label></div>
+                    <div style="margin-top:2px;">${chips}</div>
+                </td>
+                ${role('openStaff', it.openRaw, 'open', false)}${role('closeStaff', it.closeRaw, 'close', false)}${role('safeStaff', it.safeRaw, 'safe', true)}
+                ${keyTds}`;
+            if (ngOnly && !isNG) tr.classList.add('hidden');
+            body.appendChild(tr);
+            if (false) {
+                const sub = document.createElement('tr');
+                sub.className = 'ed-ngrow';
+                sub.dataset.ngof = i;
+                sub.style.background = "#fff1f2";
+                sub.innerHTML = `<td colspan="10" style="text-align:left;"><span style="font-size:10px;font-weight:800;color:#dc2626;margin-right:4px;">NG理由：</span><span class="inline-flex flex-wrap gap-1 align-middle">${ngMsgs(it).map(ngChip).join('')}</span></td>`;
+                body.appendChild(sub);
+            }
+        });
+
+        const c = document.getElementById('editNgCount');
+        if (c) { const n = ngScore(shiftResult).days; c.innerHTML = n ? `<span class="font-bold text-red-600">NG ${n}日</span>（赤い行）` : '<span class="font-bold text-emerald-600">NGなし</span>'; }
+        const lg = document.getElementById('editNgLegend'); if (lg) lg.innerHTML = ngLegend(shiftResult);
+    } catch (err) { console.error("renderEditTable error:", err); }
+};
+// NG理由の行が入ったので、日付の行は番号で探す
+goManualFixDay = function (i) {
+    goManualFix();
+    setTimeout(() => {
+        const tr = document.querySelector(`#editTableBody tr[data-idx="${i}"]`);
+        if (tr) { tr.scrollIntoView({ behavior: 'smooth', block: 'center' }); tr.classList.add('flash-row'); }
+    }, 60);
+};
+</script>
+<script>
+// ===== 手動修正の反映：自動で作り直さず、画面の内容をそのまま確定してチェックだけし直す =====
+function reflectManualEdits(goExport) {
+    if (!shiftResult || !shiftResult.length) { alert("先に割り当てを作成してください。"); return; }
+    buildShiftIndex();
+    validateAll(shiftResult);
+    recount(shiftResult);
+    const cur = shiftVersions[activeVer];
+    const before = cur ? ngScore(cur.result).days : null;
+    pushVersion("手動修正", ["画面4で手動修正した内容を反映（自動での作り直しはしない）"], before);
+    const v = shiftVersions[activeVer];
+    fixMessage = "";
+    if (goExport) { if (v) v.popPending = false; switchTab('tab5'); }
+    else switchTab('tab3');
+    const ng = ngScore(shiftResult).days;
+    try { toast(`${v.label} 割り当て結果として反映しました${ng ? `（NG ${ng}日）` : '（NGなし）'}`, ng === 0); } catch (e) { }
+}
+applyAndGoExport = function () {
+    if (!rawShiftData || !rawShiftData.length) { alert("先にExcelファイルを読み込んでください。"); return; }
+    if (!shiftResult || !shiftResult.length) generateShift();
+    reflectManualEdits(true);
+};
+
+// 手で直した日は「手動修正」として印を付け、あとで自動修正・再計算しても上書きしない
+const _updateShiftFieldM = updateShiftField;
+updateShiftField = function (index, field, value) { _updateShiftFieldM(index, field, value); const r = shiftResult[index]; if (r) { r.locked = true; r.manualEdited = true; } };
+const _setReceiverM = setReceiver;
+setReceiver = function (i, k, v) { if (shiftResult[i]) shiftResult[i].manualEdited = true; _setReceiverM(i, k, v); };
+const _setGiverM = setGiver;
+setGiver = function (i, k, v) { if (i > 0 && shiftResult[i - 1]) shiftResult[i - 1].manualEdited = true; _setGiverM(i, k, v); };
+// 鍵を変えたあと「受け渡しなし」で続く日も、変えた内容のまま固定する（作り直しで崩れないように）
+carryHolder = function (from, k, old, nw) {
+    for (let j = from; j < shiftResult.length; j++) {
+        const r = shiftResult[j]; if (!r || r.manualEdited) break;
+        if ((r.keyHolders || {})[k] !== old) break;
+        r.keyHolders[k] = nw;
+        r.locked = true;
+    }
+};
+
+// ===== 手動修正：NGの一覧は表の上にまとめて表示（クリックでその日へ） =====
+function jumpEditRow(i) {
+    const tr = document.querySelector(`#editTableBody tr[data-idx="${i}"]`);
+    if (tr) { tr.scrollIntoView({ behavior: 'smooth', block: 'center' }); tr.classList.remove('flash-row'); void tr.offsetWidth; tr.classList.add('flash-row'); }
+}
+const _renderEditTableNgList = renderEditTable;
+renderEditTable = function () {
+    _renderEditTableNgList();
+    const lg = document.getElementById('editNgLegend'); if (!lg || !shiftResult || !shiftResult.length) return;
+    const bad = shiftResult.map((r, i) => ({ r, i })).filter(o => o.r && getDisplayStatus(o.r).status === 'NG');
+    lg.innerHTML = !bad.length ? '<div class="p-3 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-800 text-sm font-bold"><i class="fa-solid fa-circle-check"></i> NGはありません</div>' : `
+      <div class="rounded-lg border border-red-200 bg-red-50 p-3 space-y-2">
+        <div class="flex flex-wrap items-center gap-2"><span class="font-bold text-red-700 text-sm"><i class="fa-solid fa-triangle-exclamation"></i> NGの日（${bad.length}日）</span><span class="text-[11px] text-slate-500">日付を押すと表のその日へ移動します</span></div>
+        ${ngLegend(shiftResult)}
+        <ul class="space-y-1 max-h-48 overflow-auto pr-1">${bad.map(o => `
+          <li class="flex gap-2 items-start text-xs"><button type="button" onclick="jumpEditRow(${o.i})" class="shrink-0 font-bold text-red-700 underline decoration-dotted hover:text-red-900 cursor-pointer whitespace-nowrap">${esc(o.r.date)}(${esc(o.r.dayOfWeek)})</button>
+            <span class="flex flex-wrap gap-1">${ngMsgs(o.r).map(ngChip).join('')}</span></li>`).join('')}</ul>
+      </div>`;
+};
 </script>
 </body>
 </html>
